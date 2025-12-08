@@ -1,14 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem('lojaGemeosCart') || '[]');
+      setCartCount(cart.length);
+    };
+
+    updateCartCount();
+    window.addEventListener('storage', updateCartCount);
+
+    // Check cart count every second (for same-tab updates)
+    const interval = setInterval(updateCartCount, 1000);
+
+    return () => {
+      window.removeEventListener('storage', updateCartCount);
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* Top Navigation */}
+      {/* Top Bar */}
+      <div className="bg-amber-900 text-white text-center text-xs py-1.5 px-4">
+        Darmowa dostawa od 200 zł | 30 dni na zwrot
+      </div>
+
+      {/* Main Navigation */}
       <div className="flex items-center justify-between px-4 py-3">
         {/* Menu Hamburger */}
         <button
@@ -22,45 +46,44 @@ export default function Header() {
         </button>
 
         {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <div className="text-2xl font-bold tracking-tight">
-            <span className="text-[#e91e63]">LOJA</span>
-            <br />
-            <span className="text-[#e91e63]">GÊMEOS</span>
-          </div>
+        <Link href="/" className="flex flex-col items-center">
+          <span className="text-[8px] tracking-[0.3em] text-gray-400 font-light">1982</span>
+          <span className="text-xl font-light tracking-[0.15em] text-amber-900" style={{ fontFamily: 'Georgia, serif' }}>SORELLE</span>
         </Link>
 
         {/* Navigation Links - Desktop */}
         <nav className="hidden md:flex items-center gap-6 ml-8">
-          <Link href="/cama" className="font-semibold text-gray-800 hover:text-[#0d6b6e] transition-colors">
-            CAMA
+          <Link href="/cama" className="font-medium text-gray-800 hover:text-amber-700 transition-colors">
+            POŚCIEL
           </Link>
-          <Link href="/mesa" className="font-semibold text-gray-800 hover:text-[#0d6b6e] transition-colors">
-            MESA
+          <Link href="/mesa" className="font-medium text-gray-800 hover:text-amber-700 transition-colors">
+            STÓŁ
           </Link>
-          <Link href="/banho" className="font-semibold text-gray-800 hover:text-[#0d6b6e] transition-colors">
-            BANHO
+          <Link href="/banho" className="font-medium text-gray-800 hover:text-amber-700 transition-colors">
+            ŁAZIENKA
           </Link>
         </nav>
 
         {/* Right Icons */}
         <div className="flex items-center gap-2">
           {/* Account */}
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Conta">
+          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors" aria-label="Konto">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </button>
 
           {/* Cart */}
-          <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative" aria-label="Carrinho">
+          <Link href="/carrinho" className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative" aria-label="Koszyk">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <span className="absolute -top-1 -right-1 bg-[#e91e63] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-              0
-            </span>
-          </button>
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
 
@@ -74,8 +97,8 @@ export default function Header() {
           </div>
           <input
             type="text"
-            placeholder="O que procura?"
-            className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-full text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#0d6b6e] transition-all"
+            placeholder="Czego szukasz?"
+            className="w-full pl-10 pr-4 py-3 bg-gray-100 rounded-full text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all"
           />
         </div>
       </div>
@@ -86,24 +109,24 @@ export default function Header() {
           <nav className="flex flex-col py-2">
             <Link
               href="/cama"
-              className="px-6 py-3 font-semibold text-gray-800 hover:bg-gray-50 hover:text-[#0d6b6e] transition-colors"
+              className="px-6 py-3 font-medium text-gray-800 hover:bg-amber-50 hover:text-amber-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              CAMA
+              POŚCIEL
             </Link>
             <Link
               href="/mesa"
-              className="px-6 py-3 font-semibold text-gray-800 hover:bg-gray-50 hover:text-[#0d6b6e] transition-colors"
+              className="px-6 py-3 font-medium text-gray-800 hover:bg-amber-50 hover:text-amber-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              MESA
+              STÓŁ
             </Link>
             <Link
               href="/banho"
-              className="px-6 py-3 font-semibold text-gray-800 hover:bg-gray-50 hover:text-[#0d6b6e] transition-colors"
+              className="px-6 py-3 font-medium text-gray-800 hover:bg-amber-50 hover:text-amber-700 transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
-              BANHO
+              ŁAZIENKA
             </Link>
           </nav>
         </div>
