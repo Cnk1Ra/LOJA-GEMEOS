@@ -70,6 +70,45 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Promo Banner */}
+      <section className="py-8 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative overflow-hidden rounded-2xl bg-[#5a5a5a] flex flex-col md:flex-row">
+            {/* Left Content */}
+            <div className="flex-1 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-white italic mb-2">
+                PROMOCJE NIE DO
+              </h2>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6">
+                PRZEGAPIENIA
+              </h2>
+              <p className="text-white/80 text-sm md:text-base italic max-w-md">
+                Odkryj komfort, który odmienia Twoje noce. Ekskluzywne zestawy pościeli i poszewek o wyjątkowej jakości i wyrafinowanym designie.
+              </p>
+
+              {/* Discount Badge */}
+              <div className="mt-6 inline-flex">
+                <div className="bg-white rounded-full w-24 h-24 md:w-28 md:h-28 flex flex-col items-center justify-center border-4 border-dashed border-gray-300">
+                  <span className="text-[10px] md:text-xs text-gray-600 font-medium">SAVE UP TO</span>
+                  <span className="text-2xl md:text-3xl font-black text-black">60%</span>
+                  <span className="text-xs md:text-sm font-bold text-black">OFF</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Image */}
+            <div className="flex-1 relative min-h-[250px] md:min-h-[350px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#5a5a5a] via-[#5a5a5a]/50 to-transparent z-10 md:w-1/3"></div>
+              <img
+                src="https://images.unsplash.com/photo-1616627561839-074385245ff6?w=800&q=80"
+                alt="Luksusowa pościel"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       <Inspirations />
 
       {/* Newsletter Section */}
