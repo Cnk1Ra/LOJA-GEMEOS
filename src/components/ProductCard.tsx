@@ -44,11 +44,17 @@ export default function ProductCard({
     const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const peopleCount = 50 + (hash % 200); // 50-250 people
     const reviewerIndex = hash % polishNames.length;
+    // Generate rating between 4.3 and 5.0 based on hash
+    const generatedRating = 4.3 + ((hash % 8) / 10);
     return {
       peopleCount,
-      reviewerName: polishNames[reviewerIndex]
+      reviewerName: polishNames[reviewerIndex],
+      generatedRating
     };
   }, [id]);
+
+  // Use generated rating if rating is 0 or undefined
+  const displayRating = rating && rating > 0 ? rating : socialProof.generatedRating;
 
   return (
     <div className="relative group">
@@ -128,13 +134,13 @@ export default function ProductCard({
             {[1, 2, 3, 4, 5].map((star) => (
               <svg
                 key={star}
-                className={`w-3.5 h-3.5 ${star <= Math.round(rating) ? 'text-amber-500 fill-current' : 'text-gray-300'}`}
+                className={`w-3.5 h-3.5 ${star <= Math.round(displayRating) ? 'text-amber-500 fill-amber-500' : 'text-gray-300'}`}
                 viewBox="0 0 20 20"
               >
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
             ))}
-            <span className="ml-1 text-sm font-medium text-gray-700">{rating.toFixed(1)}</span>
+            <span className="ml-1 text-sm font-medium text-gray-700">{displayRating.toFixed(1)}</span>
           </div>
           <span className="text-xs text-gray-500">({socialProof.peopleCount} opinii)</span>
         </div>

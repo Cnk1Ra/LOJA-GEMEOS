@@ -5,30 +5,30 @@ import { products } from '@/data/products';
 
 export default function Inspirations() {
   // Get products for each inspiration
-  const edredonProduct = products.find(p => p.subcategory === 'Capas de Edredon');
-  const lencoisProduct = products.find(p => p.subcategory === 'Lençóis');
-  const fronhasProduct = products.find(p => p.subcategory === 'Fronhas');
+  const edredonProduct = products.find(p => p.subcategory === 'Pościel na kołdrę');
+  const lencoisProduct = products.find(p => p.subcategory === 'Prześcieradła');
+  const fronhasProduct = products.find(p => p.subcategory === 'Poszewki');
 
   const inspirations = [
     {
       id: 1,
       title: 'Pościel Premium',
       subtitle: 'Komfort i styl na idealne noce',
-      href: '/cama?subcategoria=Capas%20de%20Edredon',
+      href: '/cama?subcategoria=Po%C5%9Bciel%20na%20ko%C5%82dr%C4%99',
       image: edredonProduct?.image,
     },
     {
       id: 2,
       title: 'Prześcieradła Premium',
       subtitle: 'Bawełna najwyższej jakości',
-      href: '/cama?subcategoria=Lençóis',
+      href: '/cama?subcategoria=Prze%C5%9Bcieradła',
       image: lencoisProduct?.image,
     },
     {
       id: 3,
       title: 'Poszewki i Poduszki',
       subtitle: 'Uzupełnij wystrój swojej sypialni',
-      href: '/cama?subcategoria=Fronhas',
+      href: '/cama?subcategoria=Poszewki',
       image: fronhasProduct?.image,
     }
   ];

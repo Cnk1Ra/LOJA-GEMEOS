@@ -60,10 +60,10 @@ export default function Header() {
           <Link href="/cama" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
             Pościel
           </Link>
-          <Link href="/cama?subcategoria=Capas%20de%20Edredon" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
+          <Link href="/cama?subcategoria=Po%C5%9Bciel%20na%20ko%C5%82dr%C4%99" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
             Kołdry
           </Link>
-          <Link href="/cama?subcategoria=Len%C3%A7%C3%B3is" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
+          <Link href="/cama?subcategoria=Prze%C5%9Bcieradła" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
             Prześcieradła
           </Link>
         </nav>
@@ -110,21 +110,21 @@ export default function Header() {
               Pościel
             </Link>
             <Link
-              href="/cama?subcategoria=Capas%20de%20Edredon"
+              href="/cama?subcategoria=Po%C5%9Bciel%20na%20ko%C5%82dr%C4%99"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
               Kołdry
             </Link>
             <Link
-              href="/cama?subcategoria=Len%C3%A7%C3%B3is"
+              href="/cama?subcategoria=Prze%C5%9Bcieradła"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
               Prześcieradła
             </Link>
             <Link
-              href="/cama?subcategoria=Fronhas"
+              href="/cama?subcategoria=Poszewki"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >

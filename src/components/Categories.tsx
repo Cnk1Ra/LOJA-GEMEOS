@@ -12,10 +12,10 @@ const getSubcategoryImage = (subcategory: string): string => {
 export default function Categories() {
   // Main categories with larger cards
   const mainCategories = [
-    { name: 'Capas de Edredon', count: subcategoryCounts['Capas de Edredon'] || 0 },
-    { name: 'Lençóis-Capa', count: subcategoryCounts['Lençóis-Capa'] || 0 },
-    { name: 'Lençóis', count: subcategoryCounts['Lençóis'] || 0 },
-    { name: 'Fronhas', count: subcategoryCounts['Fronhas'] || 0 },
+    { name: 'Pościel na kołdrę', count: subcategoryCounts['Pościel na kołdrę'] || 0 },
+    { name: 'Prześcieradła z gumką', count: subcategoryCounts['Prześcieradła z gumką'] || 0 },
+    { name: 'Prześcieradła', count: subcategoryCounts['Prześcieradła'] || 0 },
+    { name: 'Poszewki', count: subcategoryCounts['Poszewki'] || 0 },
   ];
 
   const secondaryCategories = subcategories.filter(
