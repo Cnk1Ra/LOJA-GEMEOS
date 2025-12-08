@@ -5,76 +5,72 @@ import Link from 'next/link';
 
 const footerSections = [
   {
-    title: 'LOJA GÊMEOS',
+    title: 'SORELLE',
     links: [
-      { name: 'Quem somos', href: '/sobre' },
-      { name: 'Nossas lojas', href: '/lojas' },
-      { name: 'Trabalhe conosco', href: '/carreiras' },
+      { name: 'O nas', href: '/o-nas' },
+      { name: 'Nasze sklepy', href: '/sklepy' },
+      { name: 'Kariera', href: '/kariera' },
       { name: 'Blog', href: '/blog' }
     ]
   },
   {
-    title: 'SERVIÇOS',
+    title: 'OBSŁUGA KLIENTA',
     links: [
-      { name: 'Ajuda', href: '/ajuda' },
-      { name: 'Minha conta', href: '/conta' },
-      { name: 'Acompanhar pedido', href: '/pedidos' },
-      { name: 'Cartão presente', href: '/cartao-presente' }
+      { name: 'Pomoc', href: '/pomoc' },
+      { name: 'Moje konto', href: '/konto' },
+      { name: 'Śledzenie zamówienia', href: '/zamowienia' },
+      { name: 'Karta podarunkowa', href: '/karta-podarunkowa' }
     ]
   },
   {
-    title: 'CATEGORIAS',
+    title: 'KATEGORIE',
     links: [
-      { name: 'Cama', href: '/cama' },
-      { name: 'Mesa', href: '/mesa' },
-      { name: 'Banho', href: '/banho' },
-      { name: 'Tapetes', href: '/tapetes' }
+      { name: 'Pościel', href: '/cama' },
+      { name: 'Obrusy', href: '/mesa' },
+      { name: 'Ręczniki', href: '/banho' },
+      { name: 'Narzuty', href: '/colchas' }
     ]
   }
 ];
+
+// SVG Icons
+const TruckIcon = () => (
+  <svg className="w-7 h-7 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+  </svg>
+);
+
+const ReturnIcon = () => (
+  <svg className="w-7 h-7 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+  </svg>
+);
+
+const CashIcon = () => (
+  <svg className="w-7 h-7 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+  </svg>
+);
+
+const SupportIcon = () => (
+  <svg className="w-7 h-7 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/>
+  </svg>
+);
 
 const serviceIcons = [
-  {
-    title: 'ENTREGA',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
-      </svg>
-    )
-  },
-  {
-    title: 'TROCAS & DEVOLUÇÕES',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-      </svg>
-    )
-  },
-  {
-    title: 'PAGAMENTO SEGURO',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-      </svg>
-    )
-  },
-  {
-    title: 'APOIO AO CLIENTE',
-    icon: (
-      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    )
-  }
+  { title: 'Darmowa Dostawa', desc: 'Powyżej 200 zł', icon: <TruckIcon /> },
+  { title: '30 Dni', desc: 'Na zwrot', icon: <ReturnIcon /> },
+  { title: 'Przy odbiorze', desc: 'Bezpieczna płatność', icon: <CashIcon /> },
+  { title: 'Pomoc 24/7', desc: 'Wsparcie', icon: <SupportIcon /> }
 ];
 
-const paymentMethods = ['VISA', 'MC', 'PIX', 'BOLETO'];
+const paymentMethods = ['Przy odbiorze', 'BLIK', 'Przelew'];
 
 const socialLinks = [
   { name: 'Facebook', icon: 'f' },
   { name: 'Instagram', icon: 'ig' },
-  { name: 'Pinterest', icon: 'p' },
-  { name: 'YouTube', icon: 'yt' }
+  { name: 'Pinterest', icon: 'p' }
 ];
 
 export default function Footer() {
@@ -85,16 +81,19 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#0d6b6e] text-white">
+    <footer className="bg-[#1a1a1a] text-white">
       {/* Service Icons */}
-      <div className="px-4 py-8 border-b border-white/20">
+      <div className="px-4 py-8 border-b border-white/10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {serviceIcons.map((service) => (
             <div key={service.title} className="flex items-center gap-3">
-              <div className="text-white">
+              <div className="flex-shrink-0">
                 {service.icon}
               </div>
-              <span className="text-sm font-semibold">{service.title}</span>
+              <div>
+                <span className="text-sm font-semibold block">{service.title}</span>
+                <span className="text-xs text-gray-400">{service.desc}</span>
+              </div>
             </div>
           ))}
         </div>
@@ -103,7 +102,7 @@ export default function Footer() {
       {/* Accordion Sections */}
       <div className="px-4 py-4">
         {footerSections.map((section) => (
-          <div key={section.title} className="border-b border-white/20">
+          <div key={section.title} className="border-b border-white/10">
             <button
               onClick={() => toggleSection(section.title)}
               className="w-full py-4 flex items-center justify-between text-left"
@@ -136,14 +135,14 @@ export default function Footer() {
       </div>
 
       {/* Social Links */}
-      <div className="px-4 py-6 border-t border-white/20">
-        <h3 className="font-semibold mb-4">SEMPRE JUNTOS</h3>
+      <div className="px-4 py-6 border-t border-white/10">
+        <h3 className="font-semibold mb-4">OBSERWUJ NAS</h3>
         <div className="flex gap-4">
           {socialLinks.map((social) => (
             <a
               key={social.name}
               href="#"
-              className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+              className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-amber-500 transition-colors"
               aria-label={social.name}
             >
               <span className="text-sm font-bold">{social.icon}</span>
@@ -153,13 +152,13 @@ export default function Footer() {
       </div>
 
       {/* Payment Methods */}
-      <div className="px-4 py-6 border-t border-white/20">
-        <h3 className="font-semibold mb-4">MODOS DE PAGAMENTO</h3>
+      <div className="px-4 py-6 border-t border-white/10">
+        <h3 className="font-semibold mb-4">METODY PŁATNOŚCI</h3>
         <div className="flex flex-wrap gap-2">
           {paymentMethods.map((method) => (
             <div
               key={method}
-              className="bg-white text-gray-800 px-3 py-1 rounded text-sm font-semibold"
+              className="bg-white text-gray-800 px-3 py-1.5 rounded text-sm font-semibold"
             >
               {method}
             </div>
@@ -168,23 +167,23 @@ export default function Footer() {
       </div>
 
       {/* Legal Links */}
-      <div className="px-4 py-6 border-t border-white/20">
-        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-white/70">
-          <Link href="/termos" className="hover:text-white">Termos de uso</Link>
+      <div className="px-4 py-6 border-t border-white/10">
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-white/60">
+          <Link href="/regulamin" className="hover:text-white">Regulamin</Link>
           <span>•</span>
-          <Link href="/privacidade" className="hover:text-white">Política de privacidade</Link>
+          <Link href="/prywatnosc" className="hover:text-white">Polityka prywatności</Link>
           <span>•</span>
           <Link href="/cookies" className="hover:text-white">Cookies</Link>
         </div>
       </div>
 
       {/* Country Selector */}
-      <div className="px-4 py-4 border-t border-white/20">
+      <div className="px-4 py-4 border-t border-white/10">
         <button className="flex items-center gap-2 text-white/80 hover:text-white transition-colors">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
           </svg>
-          <span>Brasil</span>
+          <span>Polska</span>
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
@@ -192,20 +191,9 @@ export default function Footer() {
       </div>
 
       {/* Copyright */}
-      <div className="px-4 py-4 text-center text-sm text-white/60 border-t border-white/20">
-        <p>© 2024 Loja Gêmeos. Todos os direitos reservados.</p>
+      <div className="px-4 py-4 text-center text-sm text-white/50 border-t border-white/10">
+        <p>© 2024 Sorelle. Wszelkie prawa zastrzeżone.</p>
       </div>
-
-      {/* Scroll to top button */}
-      <button
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed bottom-6 right-6 w-12 h-12 bg-gray-800 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-700 transition-colors z-50"
-        aria-label="Voltar ao topo"
-      >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-        </svg>
-      </button>
     </footer>
   );
 }
