@@ -1,109 +1,117 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import HeroBanner from "@/components/HeroBanner";
 import Categories from "@/components/Categories";
 import Inspirations from "@/components/Inspirations";
+import { products } from "@/data/products";
+import ProductCard from "@/components/ProductCard";
+import Link from "next/link";
 
 export default function Home() {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 400);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // Get best selling products (first 8)
+  const featuredProducts = products.slice(0, 8);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-neutral-50">
       <HeroBanner />
       <Categories />
+
+      {/* Featured Products Section */}
+      <section className="py-16 px-4 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black text-black mb-2">
+                Mais Vendidos
+              </h2>
+              <p className="text-neutral-500">
+                Os favoritos dos nossos clientes
+              </p>
+            </div>
+            <Link
+              href="/cama"
+              className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-black hover:text-amber-500 transition-colors"
+            >
+              Ver todos
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                description={product.description}
+                price={product.price}
+                originalPrice={product.originalPrice}
+                discount={product.discount}
+                rating={product.rating}
+                colors={product.colors}
+                moreColors={product.moreColors}
+                badge={product.badge}
+                href={product.href}
+                image={product.image}
+              />
+            ))}
+          </div>
+
+          <div className="text-center mt-10 md:hidden">
+            <Link
+              href="/cama"
+              className="inline-flex items-center gap-2 bg-black text-white font-bold px-8 py-4 rounded-full hover:bg-neutral-800 transition-colors"
+            >
+              Ver todos os produtos
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <Inspirations />
 
-      {/* Brand Section */}
-      <section className="py-8 px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">
-          Inspiracje od Sorelle
-        </h2>
+      {/* Newsletter Section */}
+      <section className="py-20 px-4 bg-black text-white">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-black mb-4">
+            Receba as novidades
+          </h2>
+          <p className="text-white/60 mb-8">
+            Inscreva-se para receber ofertas exclusivas e novidades em primeira mão.
+          </p>
 
-        <div className="flex flex-col gap-4">
-          {/* Promo Card 1 */}
-          <div className="relative overflow-hidden rounded-2xl min-h-[350px] bg-gradient-to-br from-emerald-800 to-emerald-950">
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              <h3 className="text-2xl font-bold text-white mb-1">
-                Komfort dla Twojego domu
-              </h3>
-              <p className="text-white/90 text-sm">
-                Odkryj nasze pomysły na prezenty
-              </p>
-              <div className="mt-4">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Promo Card 2 */}
-          <div className="relative overflow-hidden rounded-2xl min-h-[350px] bg-gradient-to-br from-rose-800 to-rose-950">
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              <h3 className="text-2xl font-bold text-white mb-1">
-                Nakrycie stołu
-              </h3>
-              <p className="text-white/90 text-sm">
-                Udekoruj stół na święta
-              </p>
-              <div className="mt-4">
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
-                  <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
+          <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              placeholder="O seu email"
+              className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/40 focus:outline-none focus:border-amber-500 transition-colors"
+            />
+            <button
+              type="submit"
+              className="px-8 py-4 bg-amber-500 text-black font-bold rounded-full hover:bg-amber-500 transition-colors"
+            >
+              Subscrever
+            </button>
+          </form>
         </div>
       </section>
 
       {/* About Section */}
-      <section className="py-8 px-4 bg-gray-50">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Luksusowa Pościel Premium
-        </h2>
-        <div className="text-gray-600 space-y-4">
-          <p>
-            W Sorelle wierzymy w coś prostego: Twoja codzienność zasługuje na więcej komfortu, wygody i przede wszystkim stylu. Nasza obietnica? Oferujemy produkty stworzone, aby uprościć Twoje życie i sprawić, że Twój dom będzie jeszcze bardziej przytulny.
-          </p>
-          <p>
-            Sorelle towarzyszy polskim domom z produktami najwyższej jakości od 1982 roku. <strong>Pościel</strong>, <strong>ręczniki kąpielowe</strong> czy <strong>akcesoria stołowe</strong>: każdy produkt, który wybierzesz, ma znaczenie. Musi być użyteczny, piękny, trwały i łatwy do wkomponowania w każdą przestrzeń.
-          </p>
-          <p>
-            Odnawiasz sypialnię? Szukasz rozwiązania do łazienki? Odkryj nasze miękkie ręczniki, wysokiej jakości bawełniane prześcieradła i zestawy stołowe łączące elegancję z praktycznością.
-          </p>
+      <section className="py-16 px-4 bg-neutral-100">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-black text-black mb-6">
+            Loja Gêmeos
+          </h2>
+          <div className="text-neutral-600 space-y-4">
+            <p>
+              Na Loja Gêmeos, acreditamos que o seu descanso merece o melhor. Especializados em roupa de cama premium, oferecemos uma seleção cuidada de capas de edredon, lençóis, fronhas e conjuntos completos.
+            </p>
+            <p>
+              Cada produto é pensado para combinar conforto, durabilidade e estilo. Descubra a nossa coleção de tecidos premium em algodão, linho lavado e flanela.
+            </p>
+          </div>
         </div>
       </section>
-
-      {/* Scroll to Top Button - Only on Homepage */}
-      {showScrollTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-6 right-6 w-12 h-12 bg-amber-500 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-amber-400 transition-colors z-50"
-          aria-label="Przewiń do góry"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-          </svg>
-        </button>
-      )}
     </div>
   );
 }

@@ -1,78 +1,106 @@
-import Link from 'next/link';
+'use client';
 
-const inspirations = [
-  {
-    id: 1,
-    title: 'Pościel',
-    subtitle: 'Twoja sypialnia, Twój komfort',
-    href: '/cama',
-    bgGradient: 'from-amber-400 to-amber-600',
-    bgImage: 'linear-gradient(135deg, #d4a574 0%, #8b6914 100%)'
-  },
-  {
-    id: 2,
-    title: 'Elegancka łazienka',
-    subtitle: 'Odkryj wszystkie modele',
-    href: '/banho',
-    bgGradient: 'from-teal-400 to-teal-600',
-    bgImage: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
-  },
-  {
-    id: 3,
-    title: 'Nakrycie stołu',
-    subtitle: 'Udekoruj stół na specjalne okazje',
-    href: '/mesa',
-    bgGradient: 'from-rose-400 to-rose-600',
-    bgImage: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
-  }
-];
+import Link from 'next/link';
+import { products } from '@/data/products';
 
 export default function Inspirations() {
+  // Get products for each inspiration
+  const edredonProduct = products.find(p => p.subcategory === 'Capas de Edredon');
+  const lencoisProduct = products.find(p => p.subcategory === 'Lençóis');
+  const fronhasProduct = products.find(p => p.subcategory === 'Fronhas');
+
+  const inspirations = [
+    {
+      id: 1,
+      title: 'Capas de Edredon',
+      subtitle: 'Conforto e estilo para noites perfeitas',
+      href: '/cama?subcategoria=Capas%20de%20Edredon',
+      image: edredonProduct?.image,
+    },
+    {
+      id: 2,
+      title: 'Lençóis Premium',
+      subtitle: 'Algodão de alta qualidade',
+      href: '/cama?subcategoria=Lençóis',
+      image: lencoisProduct?.image,
+    },
+    {
+      id: 3,
+      title: 'Fronhas & Almofadas',
+      subtitle: 'Complete a decoração do seu quarto',
+      href: '/cama?subcategoria=Fronhas',
+      image: fronhasProduct?.image,
+    }
+  ];
+
   return (
-    <section className="py-8 px-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Inspiracje</h2>
-
-      <div className="flex flex-col gap-4">
-        {inspirations.map((item) => (
+    <section className="py-16 px-4 bg-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-black text-black mb-2">
+              Inspirações
+            </h2>
+            <p className="text-neutral-500">
+              Descubra as tendências para o seu quarto
+            </p>
+          </div>
           <Link
-            key={item.id}
-            href={item.href}
-            className="group relative overflow-hidden rounded-2xl min-h-[300px] md:min-h-[400px]"
+            href="/cama"
+            className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-black hover:text-amber-500 transition-colors"
           >
-            {/* Background Gradient */}
-            <div
-              className="absolute inset-0 transition-transform group-hover:scale-105"
-              style={{ background: item.bgImage }}
+            Ver tudo
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </Link>
+        </div>
+
+        {/* Inspirations Grid */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {inspirations.map((item, index) => (
+            <Link
+              key={item.id}
+              href={item.href}
+              className={`group relative overflow-hidden rounded-3xl ${
+                index === 0 ? 'md:row-span-2 aspect-[3/4] md:aspect-auto' : 'aspect-[4/3]'
+              }`}
             >
-              {/* Decorative elements */}
-              <div className="absolute inset-0 opacity-20">
-                <div className="absolute top-10 left-10 w-20 h-20 bg-white rounded-full blur-xl"></div>
-                <div className="absolute bottom-20 right-20 w-32 h-32 bg-white rounded-full blur-2xl"></div>
+              {/* Background Image */}
+              <div className="absolute inset-0 bg-neutral-900">
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+                  />
+                )}
               </div>
-            </div>
 
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              <div className="flex items-end justify-between">
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-white/90 text-sm md:text-base">
-                    {item.subtitle}
-                  </p>
-                </div>
+              {/* Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                {/* Arrow Button */}
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              {/* Content */}
+              <div className="absolute inset-0 flex flex-col justify-end p-6">
+                <h3 className="text-white text-xl md:text-2xl font-bold mb-1">
+                  {item.title}
+                </h3>
+                <p className="text-white/70 text-sm mb-4">
+                  {item.subtitle}
+                </p>
+
+                {/* Button */}
+                <div className="flex items-center gap-2 text-amber-500 font-medium text-sm group-hover:gap-4 transition-all">
+                  <span>Explorar</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

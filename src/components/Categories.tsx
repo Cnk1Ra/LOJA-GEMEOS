@@ -1,99 +1,96 @@
-import Link from 'next/link';
+'use client';
 
-const categories = [
-  {
-    id: 1,
-    name: 'Pościel',
-    description: 'Prześcieradła, kołdry i poduszki',
-    href: '/cama',
-    bgColor: 'bg-amber-50',
-    icon: (
-      <svg className="w-24 h-24 text-amber-700" viewBox="0 0 100 100" fill="currentColor">
-        <rect x="15" y="40" width="70" height="40" rx="5" />
-        <rect x="20" y="30" width="60" height="15" rx="3" />
-        <rect x="25" y="20" width="50" height="15" rx="3" />
-        <circle cx="35" cy="35" r="8" />
-        <circle cx="65" cy="35" r="8" />
-      </svg>
-    )
-  },
-  {
-    id: 2,
-    name: 'Ręczniki',
-    description: 'Miękkie i chłonne',
-    href: '/banho',
-    bgColor: 'bg-sky-50',
-    icon: (
-      <svg className="w-24 h-24 text-sky-600" viewBox="0 0 100 100" fill="currentColor">
-        <rect x="20" y="20" width="60" height="70" rx="5" />
-        <rect x="30" y="30" width="40" height="10" rx="2" />
-        <rect x="30" y="50" width="40" height="10" rx="2" />
-        <rect x="30" y="70" width="40" height="10" rx="2" />
-      </svg>
-    )
-  },
-  {
-    id: 3,
-    name: 'Stół i Kuchnia',
-    description: 'Obrusy i akcesoria',
-    href: '/mesa',
-    bgColor: 'bg-orange-50',
-    icon: (
-      <svg className="w-24 h-24 text-orange-600" viewBox="0 0 100 100" fill="currentColor">
-        <ellipse cx="50" cy="60" rx="35" ry="8" />
-        <rect x="15" y="55" width="70" height="25" rx="3" />
-        <rect x="45" y="30" width="10" height="30" />
-        <circle cx="50" cy="25" r="15" />
-      </svg>
-    )
-  },
-  {
-    id: 4,
-    name: 'Dywany',
-    description: 'Do każdego wnętrza',
-    href: '/tapetes',
-    bgColor: 'bg-purple-50',
-    icon: (
-      <svg className="w-24 h-24 text-purple-600" viewBox="0 0 100 100" fill="currentColor">
-        <rect x="10" y="30" width="80" height="50" rx="3" />
-        <line x1="20" y1="40" x2="80" y2="40" stroke="currentColor" strokeWidth="3" />
-        <line x1="20" y1="55" x2="80" y2="55" stroke="currentColor" strokeWidth="3" />
-        <line x1="20" y1="70" x2="80" y2="70" stroke="currentColor" strokeWidth="3" />
-      </svg>
-    )
-  }
-];
+import Link from 'next/link';
+import { subcategories, subcategoryCounts, products } from '@/data/products';
+
+// Get a sample product image for each subcategory
+const getSubcategoryImage = (subcategory: string): string => {
+  const product = products.find(p => p.subcategory === subcategory);
+  return product?.image || '';
+};
 
 export default function Categories() {
+  // Main categories with larger cards
+  const mainCategories = [
+    { name: 'Capas de Edredon', count: subcategoryCounts['Capas de Edredon'] || 0 },
+    { name: 'Lençóis-Capa', count: subcategoryCounts['Lençóis-Capa'] || 0 },
+    { name: 'Lençóis', count: subcategoryCounts['Lençóis'] || 0 },
+    { name: 'Fronhas', count: subcategoryCounts['Fronhas'] || 0 },
+  ];
+
+  const secondaryCategories = subcategories.filter(
+    s => !mainCategories.find(m => m.name === s)
+  );
+
   return (
-    <section className="py-8 px-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Odkryj więcej produktów</h2>
+    <section className="py-12 px-4 bg-neutral-50">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-black text-black mb-3">
+            Explore por Categoria
+          </h2>
+          <p className="text-neutral-500 text-lg">
+            Encontre o conforto perfeito para o seu quarto
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Featured Category - Full Width */}
-        <Link
-          href={categories[0].href}
-          className="col-span-1 md:col-span-2 group"
-        >
-          <div className={`${categories[0].bgColor} rounded-2xl p-8 flex flex-col items-center justify-center min-h-[250px] transition-transform group-hover:scale-[1.02]`}>
-            {categories[0].icon}
-            <h3 className="text-xl font-semibold text-gray-800 mt-4">{categories[0].name}</h3>
-          </div>
-        </Link>
+        {/* Main Categories - Large Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          {mainCategories.map((category) => {
+            const image = getSubcategoryImage(category.name);
+            return (
+              <Link
+                key={category.name}
+                href={`/cama?subcategoria=${encodeURIComponent(category.name)}`}
+                className="group relative aspect-[3/4] rounded-2xl overflow-hidden bg-black"
+              >
+                {/* Background Image */}
+                {image && (
+                  <img
+                    src={image}
+                    alt={category.name}
+                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                  />
+                )}
 
-        {/* Other Categories - 2 columns */}
-        {categories.slice(1).map((category) => (
-          <Link
-            key={category.id}
-            href={category.href}
-            className="group"
-          >
-            <div className={`${category.bgColor} rounded-2xl p-6 flex flex-col items-center justify-center min-h-[200px] transition-transform group-hover:scale-[1.02]`}>
-              {category.icon}
-              <h3 className="text-lg font-semibold text-gray-800 mt-4">{category.name}</h3>
-            </div>
-          </Link>
-        ))}
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
+                  <span className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">
+                    {category.count} produtos
+                  </span>
+                  <h3 className="text-white text-lg md:text-xl font-bold leading-tight">
+                    {category.name}
+                  </h3>
+
+                  {/* Arrow */}
+                  <div className="mt-3 w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:bg-amber-500 transition-colors">
+                    <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Secondary Categories - Small Pills */}
+        <div className="flex flex-wrap justify-center gap-3">
+          {secondaryCategories.map((name) => (
+            <Link
+              key={name}
+              href={`/cama?subcategoria=${encodeURIComponent(name)}`}
+              className="px-6 py-3 bg-white border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 hover:bg-black hover:text-white hover:border-black transition-all"
+            >
+              {name}
+              <span className="ml-2 text-neutral-400">({subcategoryCounts[name] || 0})</span>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
