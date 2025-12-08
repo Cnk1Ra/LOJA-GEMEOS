@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { subcategories, subcategoryCounts, products } from '@/data/products';
+import { products } from '@/data/products';
 
 // Get a sample product image for each subcategory
 const getSubcategoryImage = (subcategory: string): string => {
@@ -12,15 +12,11 @@ const getSubcategoryImage = (subcategory: string): string => {
 export default function Categories() {
   // Main categories with larger cards
   const mainCategories = [
-    { name: 'Pościel na kołdrę', count: subcategoryCounts['Pościel na kołdrę'] || 0 },
-    { name: 'Prześcieradła z gumką', count: subcategoryCounts['Prześcieradła z gumką'] || 0 },
-    { name: 'Prześcieradła', count: subcategoryCounts['Prześcieradła'] || 0 },
-    { name: 'Poszewki', count: subcategoryCounts['Poszewki'] || 0 },
+    { name: 'Pościel na kołdrę' },
+    { name: 'Prześcieradła z gumką' },
+    { name: 'Prześcieradła' },
+    { name: 'Poszewki' },
   ];
-
-  const secondaryCategories = subcategories.filter(
-    s => !mainCategories.find(m => m.name === s)
-  );
 
   return (
     <section className="py-12 px-4 bg-neutral-50">
@@ -59,9 +55,6 @@ export default function Categories() {
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
-                  <span className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">
-                    {category.count} produktów
-                  </span>
                   <h3 className="text-white text-lg md:text-xl font-bold leading-tight">
                     {category.name}
                   </h3>
@@ -78,19 +71,6 @@ export default function Categories() {
           })}
         </div>
 
-        {/* Secondary Categories - Small Pills */}
-        <div className="flex flex-wrap justify-center gap-3">
-          {secondaryCategories.map((name) => (
-            <Link
-              key={name}
-              href={`/cama?subcategoria=${encodeURIComponent(name)}`}
-              className="px-6 py-3 bg-white border border-neutral-200 rounded-full text-sm font-medium text-neutral-700 hover:bg-black hover:text-white hover:border-black transition-all"
-            >
-              {name}
-              <span className="ml-2 text-neutral-400">({subcategoryCounts[name] || 0})</span>
-            </Link>
-          ))}
-        </div>
       </div>
     </section>
   );
