@@ -3,12 +3,12 @@ import Link from 'next/link';
 const categories = [
   {
     id: 1,
-    name: 'Roupa de Cama',
-    description: 'Lençóis, edredons e almofadas',
+    name: 'Pościel',
+    description: 'Prześcieradła, kołdry i poduszki',
     href: '/cama',
-    bgColor: 'bg-[#f5f0e6]',
+    bgColor: 'bg-amber-50',
     icon: (
-      <svg className="w-24 h-24 text-[#8b7355]" viewBox="0 0 100 100" fill="currentColor">
+      <svg className="w-24 h-24 text-amber-700" viewBox="0 0 100 100" fill="currentColor">
         <rect x="15" y="40" width="70" height="40" rx="5" />
         <rect x="20" y="30" width="60" height="15" rx="3" />
         <rect x="25" y="20" width="50" height="15" rx="3" />
@@ -19,12 +19,12 @@ const categories = [
   },
   {
     id: 2,
-    name: 'Toalhas de Banho',
-    description: 'Macias e absorventes',
+    name: 'Ręczniki',
+    description: 'Miękkie i chłonne',
     href: '/banho',
-    bgColor: 'bg-[#e8f4f8]',
+    bgColor: 'bg-sky-50',
     icon: (
-      <svg className="w-24 h-24 text-[#4a90a4]" viewBox="0 0 100 100" fill="currentColor">
+      <svg className="w-24 h-24 text-sky-600" viewBox="0 0 100 100" fill="currentColor">
         <rect x="20" y="20" width="60" height="70" rx="5" />
         <rect x="30" y="30" width="40" height="10" rx="2" />
         <rect x="30" y="50" width="40" height="10" rx="2" />
@@ -34,12 +34,12 @@ const categories = [
   },
   {
     id: 3,
-    name: 'Mesa e Cozinha',
-    description: 'Toalhas e acessórios',
+    name: 'Stół i Kuchnia',
+    description: 'Obrusy i akcesoria',
     href: '/mesa',
-    bgColor: 'bg-[#fff5e6]',
+    bgColor: 'bg-orange-50',
     icon: (
-      <svg className="w-24 h-24 text-[#c4956a]" viewBox="0 0 100 100" fill="currentColor">
+      <svg className="w-24 h-24 text-orange-600" viewBox="0 0 100 100" fill="currentColor">
         <ellipse cx="50" cy="60" rx="35" ry="8" />
         <rect x="15" y="55" width="70" height="25" rx="3" />
         <rect x="45" y="30" width="10" height="30" />
@@ -49,12 +49,12 @@ const categories = [
   },
   {
     id: 4,
-    name: 'Tapetes',
-    description: 'Para todos os ambientes',
+    name: 'Dywany',
+    description: 'Do każdego wnętrza',
     href: '/tapetes',
-    bgColor: 'bg-[#f0e6f5]',
+    bgColor: 'bg-purple-50',
     icon: (
-      <svg className="w-24 h-24 text-[#8b6b95]" viewBox="0 0 100 100" fill="currentColor">
+      <svg className="w-24 h-24 text-purple-600" viewBox="0 0 100 100" fill="currentColor">
         <rect x="10" y="30" width="80" height="50" rx="3" />
         <line x1="20" y1="40" x2="80" y2="40" stroke="currentColor" strokeWidth="3" />
         <line x1="20" y1="55" x2="80" y2="55" stroke="currentColor" strokeWidth="3" />
@@ -67,7 +67,7 @@ const categories = [
 export default function Categories() {
   return (
     <section className="py-8 px-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Quer ver mais artigos?</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Odkryj więcej produktów</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Featured Category - Full Width */}

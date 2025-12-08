@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import { getProductById, getRelatedProducts, products } from '@/data/products';
 
@@ -50,13 +50,13 @@ const getPlaceholderImage = (id: string, description: string): string => {
   const desc = description.toLowerCase();
 
   let category: keyof typeof placeholderImages = 'default';
-  if (desc.includes('edredon') || desc.includes('capa de edred')) {
+  if (desc.includes('kołdr') || desc.includes('pościel')) {
     category = 'edredon';
-  } else if (desc.includes('lençol')) {
+  } else if (desc.includes('prześcieradł')) {
     category = 'lencol';
-  } else if (desc.includes('fronha') || desc.includes('almofada')) {
+  } else if (desc.includes('poszewk') || desc.includes('poduszk')) {
     category = 'fronha';
-  } else if (desc.includes('colcha') || desc.includes('manta') || desc.includes('cobertor')) {
+  } else if (desc.includes('narzut') || desc.includes('koc') || desc.includes('pled')) {
     category = 'colcha';
   }
 
@@ -68,28 +68,23 @@ const getPlaceholderImage = (id: string, description: string): string => {
 };
 
 const sizes = [
-  { id: '1', name: '140 x 200 cm (Cama 90/100 cm)', originalPrice: 63.99, price: 39.67 },
-  { id: '2', name: '200 x 200 cm (Cama 140 cm)', originalPrice: 86.99, price: 53.93 },
-  { id: '3', name: '240 x 220 cm (Cama 140/160 cm)', originalPrice: 87.99, price: 54.55 },
-  { id: '4', name: '260 x 240 cm (Cama 160/180 cm)', originalPrice: 127.00, price: 78.74 },
-];
-
-const defaultColors = [
-  { id: '1', name: 'Azul Floral', color: '#4a90d9', image: '/placeholder.jpg' },
-  { id: '2', name: 'Branco', color: '#ffffff', image: '/placeholder.jpg' },
-  { id: '3', name: 'Bege', color: '#f5f5dc', image: '/placeholder.jpg' },
-  { id: '4', name: 'Rosa', color: '#ffc0cb', image: '/placeholder.jpg' },
+  { id: '1', name: '140 x 200 cm (Łóżko 90/100 cm)', originalPrice: 259.99, price: 159.99 },
+  { id: '2', name: '200 x 200 cm (Łóżko 140 cm)', originalPrice: 349.99, price: 219.99 },
+  { id: '3', name: '240 x 220 cm (Łóżko 140/160 cm)', originalPrice: 359.99, price: 229.99 },
+  { id: '4', name: '260 x 240 cm (Łóżko 160/180 cm)', originalPrice: 499.99, price: 319.99 },
 ];
 
 export default function ProductPage() {
   const params = useParams();
+  const router = useRouter();
   const productId = params.id as string;
 
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
-  const [selectedSize, setSelectedSize] = useState<typeof sizes[0] | null>(null);
+  const [selectedSize, setSelectedSize] = useState<typeof sizes[0] | null>(sizes[0]);
   const [showSizeModal, setShowSizeModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   // Get real product data or fallback
   const realProduct = getProductById(productId);
@@ -97,44 +92,94 @@ export default function ProductPage() {
 
   const product = realProduct ? {
     name: realProduct.description,
-    brand: realProduct.name,
+    brand: 'SORELLE',
     rating: realProduct.rating,
     reviewCount: Math.floor(Math.random() * 50) + 10,
-    description: `Cor: ${realProduct.subcategory}`,
+    description: `Kolor: ${realProduct.subcategory}`,
     image: realProduct.image,
     price: realProduct.price,
     originalPrice: realProduct.originalPrice,
     discount: realProduct.discount,
     colors: realProduct.colors,
+    subcategory: realProduct.subcategory,
   } : {
-    name: 'Capa de edredon em algodão e linho lavado, Alanis',
-    brand: 'LOJA GÊMEOS',
-    rating: 3.8,
-    reviewCount: 23,
-    description: 'Cor: Estampado',
+    name: 'Pościel bawełniana premium',
+    brand: 'SORELLE',
+    rating: 4.8,
+    reviewCount: 127,
+    description: 'Kolor: Wzorzysty',
     image: undefined,
-    price: 39.67,
-    originalPrice: 63.99,
+    price: 159.99,
+    originalPrice: 259.99,
     discount: 38,
     colors: ['#4a90d9', '#ffffff', '#f5f5dc', '#ffc0cb'],
+    subcategory: 'Pościel',
   };
 
   const colors = product.colors.map((color, i) => ({
     id: String(i + 1),
-    name: `Cor ${i + 1}`,
+    name: `Kolor ${i + 1}`,
     color: color,
     image: product.image,
   }));
+
+  // Track recently viewed
+  useEffect(() => {
+    if (typeof window !== 'undefined' && realProduct) {
+      const viewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      const productData = {
+        id: productId,
+        name: realProduct.name,
+        description: realProduct.description,
+        price: realProduct.price,
+        originalPrice: realProduct.originalPrice,
+        discount: realProduct.discount,
+        image: realProduct.image,
+        href: `/produto/${productId}`,
+        subcategory: realProduct.subcategory
+      };
+      const filtered = viewed.filter((p: { id: string }) => p.id !== productId);
+      filtered.unshift(productData);
+      localStorage.setItem('recentlyViewed', JSON.stringify(filtered.slice(0, 10)));
+    }
+  }, [productId, realProduct]);
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      setShowSizeModal(true);
+      return;
+    }
+
+    const cartItem = {
+      id: `${productId}-${selectedSize.id}-${Date.now()}`,
+      name: product.brand,
+      description: product.name,
+      color: colors[selectedColorIndex]?.name || 'Standardowy',
+      size: selectedSize.name,
+      ref: productId,
+      price: selectedSize.price,
+      originalPrice: selectedSize.originalPrice,
+      quantity: quantity,
+      delivery: 'Dostawa w 3-5 dni roboczych',
+      image: product.image || getPlaceholderImage(productId, product.name),
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem('lojaGemeosCart') || '[]');
+    existingCart.push(cartItem);
+    localStorage.setItem('lojaGemeosCart', JSON.stringify(existingCart));
+
+    router.push('/carrinho');
+  };
 
   return (
     <div className="min-h-screen bg-white pb-24">
       {/* Breadcrumb */}
       <div className="px-4 py-3 text-sm text-gray-500">
-        <Link href="/" className="hover:text-[black]">...</Link>
+        <Link href="/" className="hover:text-black">...</Link>
         <span className="mx-2">/</span>
-        <Link href="/cama" className="hover:text-[black]">Roupa de cama</Link>
+        <Link href="/cama" className="hover:text-black">Pościel</Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-800">{realProduct?.subcategory || 'Capas de edredon'}</span>
+        <span className="text-gray-800">{product.subcategory || 'Kołdry'}</span>
       </div>
 
       {/* Product Image Gallery */}
@@ -162,7 +207,7 @@ export default function ProductPage() {
           className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center"
         >
           <svg
-            className={`w-5 h-5 ${isFavorite ? 'text-[black] fill-[black]' : 'text-gray-400'}`}
+            className={`w-5 h-5 ${isFavorite ? 'text-amber-500 fill-amber-500' : 'text-gray-400'}`}
             fill={isFavorite ? 'currentColor' : 'none'}
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -172,9 +217,11 @@ export default function ProductPage() {
         </button>
 
         {/* Badge */}
-        <span className="absolute top-4 left-4 bg-[black] text-white text-xs font-semibold px-2 py-1 rounded">
-          Promoção
-        </span>
+        {product.discount && product.discount > 0 && (
+          <span className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+            -{product.discount}%
+          </span>
+        )}
       </div>
 
       {/* Product Info */}
@@ -185,12 +232,12 @@ export default function ProductPage() {
         {/* Rating */}
         <div className="flex items-center gap-2 mt-2">
           <div className="flex items-center">
-            <svg className="w-4 h-4 text-yellow-400 fill-current" viewBox="0 0 20 20">
+            <svg className="w-4 h-4 text-amber-500 fill-current" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
             <span className="ml-1 text-sm font-medium">{product.rating}</span>
           </div>
-          <span className="text-sm text-gray-500">({product.reviewCount} avaliações)</span>
+          <span className="text-sm text-gray-500">({product.reviewCount} opinii)</span>
         </div>
 
         <p className="text-sm text-gray-600 mt-2">{product.description}</p>
@@ -199,14 +246,14 @@ export default function ProductPage() {
       {/* Color Selector */}
       {colors.length > 0 && (
         <div className="px-4 py-4 border-t border-gray-100">
-          <p className="text-sm font-medium text-gray-700 mb-3">Cor: {colors[selectedColorIndex]?.name}</p>
+          <p className="text-sm font-medium text-gray-700 mb-3">Kolor: {colors[selectedColorIndex]?.name}</p>
           <div className="flex gap-2">
             {colors.map((color, index) => (
               <button
                 key={color.id}
                 onClick={() => setSelectedColorIndex(index)}
                 className={`w-12 h-12 rounded-lg border-2 ${
-                  selectedColorIndex === index ? 'border-[black]' : 'border-gray-200'
+                  selectedColorIndex === index ? 'border-black' : 'border-gray-200'
                 }`}
                 style={{ backgroundColor: color.color }}
               />
@@ -222,7 +269,7 @@ export default function ProductPage() {
           className="w-full flex items-center justify-between py-3 px-4 border border-gray-200 rounded-lg"
         >
           <span className="text-gray-700">
-            {selectedSize ? selectedSize.name : 'Escolha um tamanho'}
+            {selectedSize ? selectedSize.name : 'Wybierz rozmiar'}
           </span>
           <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -230,51 +277,74 @@ export default function ProductPage() {
         </button>
       </div>
 
+      {/* Quantity */}
+      <div className="px-4 py-4 border-t border-gray-100">
+        <p className="text-sm font-medium text-gray-700 mb-3">Ilość</p>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center border border-gray-200 rounded-lg">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+            >
+              -
+            </button>
+            <span className="w-12 text-center text-sm font-medium">{quantity}</span>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Price */}
       <div className="px-4 py-4 border-t border-gray-100">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm text-gray-500">a partir de</span>
+          <span className="text-sm text-gray-500">od</span>
           <span className="text-2xl font-bold text-gray-800">
-            {(selectedSize?.price || product.price).toFixed(2).replace('.', ',')} €
+            {(selectedSize?.price || product.price).toFixed(2).replace('.', ',')} zł
           </span>
         </div>
         <p className="text-sm mt-1">
           <span className="line-through text-gray-400">
-            {(selectedSize?.originalPrice || product.originalPrice).toFixed(2).replace('.', ',')} €
+            {(selectedSize?.originalPrice || product.originalPrice).toFixed(2).replace('.', ',')} zł
           </span>
-          <span className="text-[black] font-semibold ml-2">
+          <span className="text-red-600 font-semibold ml-2">
             -{product.discount}%
           </span>
         </p>
-
-        {/* Klarna */}
-        <div className="flex items-center gap-2 mt-3 p-3 bg-gray-50 rounded-lg">
-          <span className="font-bold text-pink-500">Klarna</span>
-          <span className="text-sm text-gray-600">
-            3 pagamentos de {((selectedSize?.price || product.price) / 3).toFixed(2).replace('.', ',')} € sem juros
-          </span>
-        </div>
       </div>
 
       {/* Delivery Info */}
       <div className="px-4 py-4 border-t border-gray-100 space-y-3">
+        <div className="flex items-center gap-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <svg className="w-6 h-6 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <div>
+            <p className="font-bold text-amber-800">Płatność przy odbiorze</p>
+            <p className="text-sm text-amber-700">Zapłać kurierowi przy dostawie</p>
+          </div>
+        </div>
         <div className="flex items-center gap-3">
           <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-          <span className="text-sm text-gray-700">Entrega grátis</span>
+          <span className="text-sm text-gray-700">Darmowa dostawa powyżej 200 zł</span>
         </div>
         <div className="flex items-center gap-3">
           <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span className="text-sm text-gray-700">30 dias para trocar ou devolver</span>
+          <span className="text-sm text-gray-700">30 dni na zwrot lub wymianę</span>
         </div>
       </div>
 
       {/* Suggestions */}
       <div className="px-4 py-6 border-t border-gray-100">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Sugestões de decoração</h2>
+        <h2 className="text-lg font-bold text-gray-800 mb-4">Pasujące produkty</h2>
         <div className="grid grid-cols-2 gap-4">
           {relatedProductsData.map((prod) => (
             <ProductCard
@@ -291,6 +361,7 @@ export default function ProductPage() {
               badge={prod.badge}
               href={prod.href}
               image={prod.image}
+              subcategory={prod.subcategory}
             />
           ))}
         </div>
@@ -298,13 +369,13 @@ export default function ProductPage() {
 
       {/* Reviews */}
       <div className="px-4 py-6 border-t border-gray-100">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Avaliações dos clientes</h2>
+        <h2 className="text-lg font-bold text-gray-800 mb-4">Opinie klientów</h2>
         <div className="space-y-3">
           {[
-            { label: 'Relação qualidade/preço', rating: 5 },
-            { label: 'Satisfação geral/Estilo', rating: 4 },
-            { label: 'Macieza/Toque agradável', rating: 5 },
-            { label: 'Durabilidade', rating: 4 },
+            { label: 'Stosunek jakości do ceny', rating: 5 },
+            { label: 'Ogólne zadowolenie/Styl', rating: 4 },
+            { label: 'Miękkość/Przyjemny dotyk', rating: 5 },
+            { label: 'Trwałość', rating: 4 },
           ].map((item, i) => (
             <div key={i} className="flex items-center justify-between">
               <span className="text-sm text-gray-600">{item.label}</span>
@@ -312,7 +383,7 @@ export default function ProductPage() {
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
                     key={star}
-                    className={`w-4 h-4 ${star <= item.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                    className={`w-4 h-4 ${star <= item.rating ? 'text-amber-500 fill-current' : 'text-gray-300'}`}
                     viewBox="0 0 20 20"
                   >
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -332,7 +403,7 @@ export default function ProductPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="sticky top-0 bg-white px-4 py-4 border-b flex items-center justify-between">
-              <h2 className="text-lg font-bold">Escolha um tamanho</h2>
+              <h2 className="text-lg font-bold">Wybierz rozmiar</h2>
               <button onClick={() => setShowSizeModal(false)} className="p-2">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -345,7 +416,7 @@ export default function ProductPage() {
                 <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm text-gray-700">Fronha vendida separadamente</span>
+                <span className="text-sm text-gray-700">Poszewki na poduszki sprzedawane osobno</span>
               </div>
 
               <div className="space-y-2">
@@ -357,16 +428,16 @@ export default function ProductPage() {
                       setShowSizeModal(false);
                     }}
                     className={`w-full flex items-center justify-between p-4 border rounded-lg ${
-                      selectedSize?.id === size.id ? 'border-[black] bg-[black]/5' : 'border-gray-200'
+                      selectedSize?.id === size.id ? 'border-black bg-gray-50' : 'border-gray-200'
                     }`}
                   >
                     <span className="text-gray-800">{size.name}</span>
                     <div className="text-right">
                       <span className="line-through text-gray-400 text-sm mr-2">
-                        {size.originalPrice.toFixed(2).replace('.', ',')} €
+                        {size.originalPrice.toFixed(2).replace('.', ',')} zł
                       </span>
                       <span className="font-bold text-gray-800">
-                        {size.price.toFixed(2).replace('.', ',')} €
+                        {size.price.toFixed(2).replace('.', ',')} zł
                       </span>
                     </div>
                   </button>
@@ -378,9 +449,12 @@ export default function ProductPage() {
       )}
 
       {/* Fixed Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
-        <button className="w-full bg-[black] text-white font-bold py-4 rounded-lg hover:bg-[#0a5456] transition-colors">
-          JUNTAR AO CARRINHO
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-40">
+        <button
+          onClick={handleAddToCart}
+          className="w-full bg-amber-500 text-black font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors"
+        >
+          DODAJ DO KOSZYKA - {((selectedSize?.price || product.price) * quantity).toFixed(2).replace('.', ',')} zł
         </button>
       </div>
     </div>

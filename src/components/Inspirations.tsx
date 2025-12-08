@@ -3,26 +3,26 @@ import Link from 'next/link';
 const inspirations = [
   {
     id: 1,
-    title: 'Roupa de cama',
-    subtitle: 'O seu quarto, o seu conforto',
+    title: 'Pościel',
+    subtitle: 'Twoja sypialnia, Twój komfort',
     href: '/cama',
-    bgGradient: 'from-blue-400 to-blue-600',
-    bgImage: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    bgGradient: 'from-amber-400 to-amber-600',
+    bgImage: 'linear-gradient(135deg, #d4a574 0%, #8b6914 100%)'
   },
   {
     id: 2,
-    title: 'Banho elegante',
-    subtitle: 'Descubra todos os modelos',
+    title: 'Elegancka łazienka',
+    subtitle: 'Odkryj wszystkie modele',
     href: '/banho',
     bgGradient: 'from-teal-400 to-teal-600',
     bgImage: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)'
   },
   {
     id: 3,
-    title: 'Mesa de festa',
-    subtitle: 'Decore a mesa para ocasiões especiais',
+    title: 'Nakrycie stołu',
+    subtitle: 'Udekoruj stół na specjalne okazje',
     href: '/mesa',
-    bgGradient: 'from-amber-400 to-orange-600',
+    bgGradient: 'from-rose-400 to-rose-600',
     bgImage: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
   }
 ];
@@ -30,7 +30,7 @@ const inspirations = [
 export default function Inspirations() {
   return (
     <section className="py-8 px-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Inspirações</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Inspiracje</h2>
 
       <div className="flex flex-col gap-4">
         {inspirations.map((item) => (
