@@ -58,34 +58,34 @@ export default function Header() {
         {/* Navigation Links - Desktop */}
         <nav className="hidden md:flex items-center gap-8 absolute left-1/2 transform -translate-x-1/2 top-full bg-black py-2">
           <Link href="/cama" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
-            Roupa de Cama
+            Pościel
           </Link>
           <Link href="/cama?subcategoria=Capas%20de%20Edredon" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
-            Edredons
+            Kołdry
           </Link>
           <Link href="/cama?subcategoria=Len%C3%A7%C3%B3is" className="text-xs font-light text-white/70 hover:text-white transition-colors uppercase tracking-widest">
-            Lençóis
+            Prześcieradła
           </Link>
         </nav>
 
         {/* Right Icons */}
         <div className="flex items-center gap-1">
           {/* Search */}
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors" aria-label="Pesquisar">
+          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors" aria-label="Szukaj">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
 
           {/* Account */}
-          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors" aria-label="Conta">
+          <button className="p-2.5 hover:bg-white/10 rounded-full transition-colors" aria-label="Konto">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </button>
 
           {/* Cart */}
-          <Link href="/carrinho" className="p-2.5 hover:bg-white/10 rounded-full transition-colors relative" aria-label="Carrinho">
+          <Link href="/carrinho" className="p-2.5 hover:bg-white/10 rounded-full transition-colors relative" aria-label="Koszyk">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
@@ -107,28 +107,28 @@ export default function Header() {
               className="px-6 py-4 font-light text-white/80 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
-              Roupa de Cama
+              Pościel
             </Link>
             <Link
               href="/cama?subcategoria=Capas%20de%20Edredon"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
-              Edredons
+              Kołdry
             </Link>
             <Link
               href="/cama?subcategoria=Len%C3%A7%C3%B3is"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
-              Lençóis
+              Prześcieradła
             </Link>
             <Link
               href="/cama?subcategoria=Fronhas"
               className="px-6 py-4 font-light text-white/60 hover:bg-white/5 hover:text-white transition-colors tracking-wider"
               onClick={() => setIsMenuOpen(false)}
             >
-              Fronhas
+              Poszewki
             </Link>
           </nav>
         </div>
