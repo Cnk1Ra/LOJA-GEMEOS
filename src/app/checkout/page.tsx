@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { products } from '@/data/products';
 
 interface CartItem {
   id: string;
@@ -23,6 +24,15 @@ interface Extras {
   giftWrapPrice: number;
   ecoPrice: number;
   priorityPrice: number;
+}
+
+interface UpsellItem {
+  id: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  image: string;
+  selected: boolean;
 }
 
 // Polish voivodeships
@@ -52,9 +62,11 @@ export default function CheckoutPage() {
     saveAddress: true
   });
 
-  const [step, setStep] = useState<'address' | 'confirmation'>('address');
+  const [step, setStep] = useState<'address' | 'confirmation' | 'upsell'>('address');
   const [orderComplete, setOrderComplete] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
+  const [upsellItems, setUpsellItems] = useState<UpsellItem[]>([]);
+  const [upsellTotal, setUpsellTotal] = useState(0);
 
   // Load cart data from localStorage
   useEffect(() => {
@@ -80,11 +92,88 @@ export default function CheckoutPage() {
     setIsLoaded(true);
   }, []);
 
+  // Load upsell products from recently viewed
+  const loadUpsellProducts = useCallback(() => {
+    const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+    const cartIds = cartItems.map(item => item.id);
+
+    // Filter out products already in cart
+    const availableProducts = recentlyViewed
+      .filter((id: string) => !cartIds.includes(id))
+      .slice(0, 3);
+
+    // If not enough recently viewed, add random products
+    if (availableProducts.length < 3) {
+      const randomProducts = products
+        .filter(p => !cartIds.includes(p.id) && !availableProducts.includes(p.id))
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3 - availableProducts.length)
+        .map(p => p.id);
+      availableProducts.push(...randomProducts);
+    }
+
+    // Convert to upsell items
+    const upsells: UpsellItem[] = availableProducts.map((id: string) => {
+      const product = products.find(p => p.id === id);
+      if (!product) return null;
+      return {
+        id: product.id,
+        description: product.description,
+        price: product.price,
+        originalPrice: product.originalPrice || product.price,
+        image: product.image,
+        selected: false
+      };
+    }).filter((item: UpsellItem | null): item is UpsellItem => item !== null);
+
+    setUpsellItems(upsells);
+  }, [cartItems]);
+
+  // Complete order function
+  const completeOrder = useCallback(() => {
+    const orderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
+    setOrderNumber(orderNum);
+
+    // Clear cart
+    localStorage.removeItem('lojaGemeosCart');
+    localStorage.removeItem('lojaGemeosExtras');
+
+    setOrderComplete(true);
+  }, []);
+
+  // Auto-confirm order if user leaves during upsell
+  useEffect(() => {
+    if (step !== 'upsell') return;
+
+    const handleBeforeUnload = () => {
+      // Auto-confirm the order
+      completeOrder();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [step, completeOrder]);
+
   // Calculate totals (in PLN)
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const extrasTotal = extras ? (extras.giftWrapPrice + extras.ecoPrice + extras.priorityPrice) : 0;
   const shippingCost = subtotal >= 200 ? 0 : 14.99;
-  const total = subtotal + extrasTotal + shippingCost;
+  const total = subtotal + extrasTotal + shippingCost + upsellTotal;
+
+  // Toggle upsell item selection
+  const toggleUpsellItem = (id: string) => {
+    setUpsellItems(prev => {
+      const updated = prev.map(item =>
+        item.id === id ? { ...item, selected: !item.selected } : item
+      );
+      // Recalculate upsell total
+      const newUpsellTotal = updated
+        .filter(item => item.selected)
+        .reduce((sum, item) => sum + item.price, 0);
+      setUpsellTotal(newUpsellTotal);
+      return updated;
+    });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -106,15 +195,12 @@ export default function CheckoutPage() {
         alert('Proszę wypełnić wszystkie wymagane pola.');
       }
     } else if (step === 'confirmation') {
-      // Generate order number
-      const orderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
-      setOrderNumber(orderNum);
-
-      // Clear cart
-      localStorage.removeItem('lojaGemeosCart');
-      localStorage.removeItem('lojaGemeosExtras');
-
-      setOrderComplete(true);
+      // Load upsell products and go to upsell step
+      loadUpsellProducts();
+      setStep('upsell');
+    } else if (step === 'upsell') {
+      // Complete the order with any selected upsells
+      completeOrder();
     }
   };
 
@@ -233,7 +319,15 @@ export default function CheckoutPage() {
       <div className="bg-white border-b sticky top-0 z-30">
         <div className="px-4 py-3 flex items-center justify-between">
           <button
-            onClick={() => step === 'address' ? router.push('/carrinho') : setStep('address')}
+            onClick={() => {
+              if (step === 'address') {
+                router.push('/carrinho');
+              } else if (step === 'confirmation') {
+                setStep('address');
+              } else if (step === 'upsell') {
+                setStep('confirmation');
+              }
+            }}
             className="flex items-center gap-2 text-gray-600 hover:text-black"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,32 +340,47 @@ export default function CheckoutPage() {
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center pb-3 px-4">
-          <div className="flex items-center gap-2 text-sm">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-1 text-xs">
+            {/* Step 1: Koszyk */}
+            <div className="flex items-center gap-1">
+              <div className="w-5 h-5 bg-green-500 text-white rounded-full flex items-center justify-center text-[10px]">
+                <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <span className="text-gray-500">Koszyk</span>
+              <span className="text-gray-500 hidden sm:inline">Koszyk</span>
             </div>
-            <div className="w-6 h-px bg-gray-300"></div>
-            <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 ${step === 'confirmation' ? 'bg-green-500' : 'bg-black'} text-white rounded-full flex items-center justify-center text-xs`}>
-                {step === 'confirmation' ? (
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-4 h-px bg-gray-300"></div>
+            {/* Step 2: Dane */}
+            <div className="flex items-center gap-1">
+              <div className={`w-5 h-5 ${step !== 'address' ? 'bg-green-500' : 'bg-black'} text-white rounded-full flex items-center justify-center text-[10px]`}>
+                {step !== 'address' ? (
+                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 ) : '2'}
               </div>
               <span className={step === 'address' ? 'font-medium text-black' : 'text-gray-500'}>Dane</span>
             </div>
-            <div className="w-6 h-px bg-gray-300"></div>
-            <div className="flex items-center gap-2">
-              <div className={`w-6 h-6 ${step === 'confirmation' ? 'bg-black' : 'bg-gray-200'} ${step === 'confirmation' ? 'text-white' : 'text-gray-500'} rounded-full flex items-center justify-center text-xs`}>
-                3
+            <div className="w-4 h-px bg-gray-300"></div>
+            {/* Step 3: Potwierdzenie */}
+            <div className="flex items-center gap-1">
+              <div className={`w-5 h-5 ${step === 'upsell' ? 'bg-green-500' : step === 'confirmation' ? 'bg-black' : 'bg-gray-200'} ${step === 'confirmation' || step === 'upsell' ? 'text-white' : 'text-gray-500'} rounded-full flex items-center justify-center text-[10px]`}>
+                {step === 'upsell' ? (
+                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : '3'}
               </div>
               <span className={step === 'confirmation' ? 'font-medium text-black' : 'text-gray-500'}>Potwierdzenie</span>
+            </div>
+            <div className="w-4 h-px bg-gray-300"></div>
+            {/* Step 4: Oferta */}
+            <div className="flex items-center gap-1">
+              <div className={`w-5 h-5 ${step === 'upsell' ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'} rounded-full flex items-center justify-center text-[10px]`}>
+                4
+              </div>
+              <span className={step === 'upsell' ? 'font-medium text-black' : 'text-gray-500'}>Oferta</span>
             </div>
           </div>
         </div>
@@ -545,6 +654,104 @@ export default function CheckoutPage() {
         </>
       )}
 
+      {/* Upsell Step */}
+      {step === 'upsell' && (
+        <div className="bg-white mt-2 p-4">
+          {/* Timer/Urgency Banner */}
+          <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl p-4 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="font-bold text-lg">Specjalna oferta dla Ciebie!</p>
+                <p className="text-white/80 text-sm">Dodaj produkty do zamówienia z rabatem</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 className="font-bold text-gray-800 mb-4 text-center">
+            Uzupełnij swój zestaw pościeli
+          </h3>
+
+          {/* Upsell Products */}
+          <div className="space-y-3">
+            {upsellItems.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => toggleUpsellItem(item.id)}
+                className={`flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all ${
+                  item.selected
+                    ? 'border-2 border-amber-500 bg-amber-50'
+                    : 'border-2 border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                {/* Checkbox */}
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  item.selected ? 'bg-amber-500' : 'border-2 border-gray-300'
+                }`}>
+                  {item.selected && (
+                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                </div>
+
+                {/* Product Image */}
+                <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                  {item.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.image} alt={item.description} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-amber-100 to-amber-200"></div>
+                  )}
+                </div>
+
+                {/* Product Info */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-800 line-clamp-2">{item.description}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="font-bold text-black">{item.price.toFixed(2).replace('.', ',')} zł</span>
+                    {item.originalPrice > item.price && (
+                      <span className="text-xs text-gray-400 line-through">{item.originalPrice.toFixed(2).replace('.', ',')} zł</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Add Badge */}
+                <div className={`px-3 py-1.5 rounded-full text-xs font-bold flex-shrink-0 ${
+                  item.selected ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-600'
+                }`}>
+                  {item.selected ? 'Dodano' : 'Dodaj'}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Upsell Summary */}
+          {upsellTotal > 0 && (
+            <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between">
+                <span className="text-green-800 font-medium">Dodatkowe produkty:</span>
+                <span className="font-bold text-green-800">+{upsellTotal.toFixed(2).replace('.', ',')} zł</span>
+              </div>
+            </div>
+          )}
+
+          {/* Skip Option */}
+          <div className="mt-4 text-center">
+            <button
+              onClick={completeOrder}
+              className="text-gray-500 text-sm underline hover:text-gray-700"
+            >
+              Pomiń i zakończ zamówienie
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Benefits */}
       <div className="bg-white mt-2 p-4">
         <div className="grid grid-cols-3 gap-4 text-center">
@@ -587,6 +794,13 @@ export default function CheckoutPage() {
             <span>Dostawa</span>
             <span>{shippingCost === 0 ? 'Gratis' : `${shippingCost.toFixed(2).replace('.', ',')} zł`}</span>
           </div>
+          {/* Upsell Total */}
+          {upsellTotal > 0 && (
+            <div className="flex justify-between text-sm text-green-600 font-medium mt-1">
+              <span>Dodatkowe produkty</span>
+              <span>+{upsellTotal.toFixed(2).replace('.', ',')} zł</span>
+            </div>
+          )}
         </div>
 
         {/* Total & CTA */}
@@ -599,7 +813,7 @@ export default function CheckoutPage() {
             onClick={handleSubmit}
             className="bg-amber-500 text-black font-bold px-6 py-4 rounded-xl hover:bg-amber-400 transition-colors"
           >
-            {step === 'address' ? 'DALEJ' : 'ZAMÓW - ZAPŁAĆ PRZY ODBIORZE'}
+            {step === 'address' ? 'DALEJ' : step === 'confirmation' ? 'DALEJ' : 'ZAMÓW - ZAPŁAĆ PRZY ODBIORZE'}
           </button>
         </div>
       </div>
