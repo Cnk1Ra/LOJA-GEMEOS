@@ -41,14 +41,14 @@ export default function CamaPage() {
     <div className="min-h-screen bg-white">
       {/* Breadcrumb */}
       <div className="px-4 py-3 text-sm text-gray-500">
-        <Link href="/" className="hover:text-black">...</Link>
+        <Link href="/" className="hover:text-black">Strona główna</Link>
         <span className="mx-2">/</span>
-        <span className="text-gray-800 font-medium">Roupa de cama</span>
+        <span className="text-gray-800 font-medium">Pościel</span>
       </div>
 
       {/* Category Title */}
       <div className="px-4 pb-4">
-        <h1 className="text-3xl font-bold text-gray-800">Roupa de cama</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Pościel</h1>
       </div>
 
       {/* Subcategories and Filters */}
@@ -87,10 +87,10 @@ export default function CamaPage() {
                   href="/promocoes"
                   className="relative overflow-hidden rounded-lg bg-gradient-to-br from-[#1a1a4e] to-[#2d2d6e] flex flex-col items-center justify-center p-4 text-center mt-4 min-h-[200px]"
                 >
-                  <p className="text-white/80 text-xs mb-1">De 01/12 a 08/12</p>
+                  <p className="text-white/80 text-xs mb-1">01-08.12</p>
                   <h3 className="text-white text-2xl font-black mb-1">CYBER</h3>
                   <h3 className="text-white text-2xl font-black mb-2">WEEK</h3>
-                  <p className="text-white text-lg font-bold">ATÉ -60%</p>
+                  <p className="text-white text-lg font-bold">DO -60%</p>
                   <div className="absolute bottom-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
                     <svg className="w-4 h-4 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -105,12 +105,12 @@ export default function CamaPage() {
         {/* Empty state */}
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">Nenhum produto encontrado nesta categoria.</p>
+            <p className="text-gray-500">Nie znaleziono produktów w tej kategorii.</p>
             <button
               onClick={() => setActiveSubcategory(null)}
               className="mt-4 text-black font-medium hover:underline"
             >
-              Ver todos os produtos
+              Zobacz wszystkie produkty
             </button>
           </div>
         )}
@@ -120,10 +120,21 @@ export default function CamaPage() {
       {filteredProducts.length > 20 && (
         <div className="px-4 pb-8 text-center">
           <button className="px-8 py-3 border border-gray-300 rounded-full text-gray-700 font-medium hover:border-gray-400 transition-colors">
-            Ver mais produtos
+            Zobacz więcej produktów
           </button>
         </div>
       )}
+
+      {/* Scroll to top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-6 w-12 h-12 bg-amber-500 text-black rounded-full shadow-lg flex items-center justify-center hover:bg-amber-400 transition-colors z-50"
+        aria-label="Powrót na górę"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
     </div>
   );
 }

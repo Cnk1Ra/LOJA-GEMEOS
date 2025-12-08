@@ -1,3 +1,5 @@
+'use client';
+
 import HeroBanner from "@/components/HeroBanner";
 import Categories from "@/components/Categories";
 import Inspirations from "@/components/Inspirations";
@@ -20,17 +22,17 @@ export default function Home() {
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="text-3xl md:text-4xl font-black text-black mb-2">
-                Mais Vendidos
+                Najchętniej Kupowane
               </h2>
               <p className="text-neutral-500">
-                Os favoritos dos nossos clientes
+                Ulubione produkty naszych klientów
               </p>
             </div>
             <Link
               href="/cama"
               className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-black hover:text-amber-500 transition-colors"
             >
-              Ver todos
+              Zobacz wszystko
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -44,9 +46,9 @@ export default function Home() {
                 id={product.id}
                 name={product.name}
                 description={product.description}
-                price={product.price}
-                originalPrice={product.originalPrice}
-                discount={product.discount}
+                price={159.99}
+                originalPrice={259.99}
+                discount={38}
                 rating={product.rating}
                 colors={product.colors}
                 moreColors={product.moreColors}
@@ -62,7 +64,7 @@ export default function Home() {
               href="/cama"
               className="inline-flex items-center gap-2 bg-black text-white font-bold px-8 py-4 rounded-full hover:bg-neutral-800 transition-colors"
             >
-              Ver todos os produtos
+              Zobacz wszystkie produkty
             </Link>
           </div>
         </div>
@@ -74,23 +76,23 @@ export default function Home() {
       <section className="py-20 px-4 bg-black text-white">
         <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-black mb-4">
-            Receba as novidades
+            Otrzymuj nowości
           </h2>
           <p className="text-white/60 mb-8">
-            Inscreva-se para receber ofertas exclusivas e novidades em primeira mão.
+            Zapisz się, aby otrzymywać ekskluzywne oferty i nowości jako pierwsza.
           </p>
 
           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input
               type="email"
-              placeholder="O seu email"
+              placeholder="Twój email"
               className="flex-1 px-6 py-4 bg-white/10 border border-white/20 rounded-full text-white placeholder-white/40 focus:outline-none focus:border-amber-500 transition-colors"
             />
             <button
               type="submit"
               className="px-8 py-4 bg-amber-500 text-black font-bold rounded-full hover:bg-amber-500 transition-colors"
             >
-              Subscrever
+              Zapisz się
             </button>
           </form>
         </div>
@@ -100,18 +102,29 @@ export default function Home() {
       <section className="py-16 px-4 bg-neutral-100">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-black text-black mb-6">
-            Loja Gêmeos
+            Sorelle
           </h2>
           <div className="text-neutral-600 space-y-4">
             <p>
-              Na Loja Gêmeos, acreditamos que o seu descanso merece o melhor. Especializados em roupa de cama premium, oferecemos uma seleção cuidada de capas de edredon, lençóis, fronhas e conjuntos completos.
+              W Sorelle wierzymy, że Twój odpoczynek zasługuje na to, co najlepsze. Specjalizujemy się w luksusowej pościeli premium, oferując starannie wyselekcjonowany wybór poszew na kołdrę, prześcieradeł, poszewek i kompletnych zestawów.
             </p>
             <p>
-              Cada produto é pensado para combinar conforto, durabilidade e estilo. Descubra a nossa coleção de tecidos premium em algodão, linho lavado e flanela.
+              Każdy produkt jest zaprojektowany tak, aby łączyć komfort, trwałość i styl. Odkryj naszą kolekcję tkanin premium z bawełny, pranego lnu i flaneli.
             </p>
           </div>
         </div>
       </section>
+
+      {/* Scroll to top */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed bottom-6 right-6 w-12 h-12 bg-amber-500 text-black rounded-full shadow-lg flex items-center justify-center hover:bg-amber-400 transition-colors z-50"
+        aria-label="Powrót na górę"
+      >
+        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+      </button>
     </div>
   );
 }

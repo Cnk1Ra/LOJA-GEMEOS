@@ -58,8 +58,8 @@ export default function CategoryFilter({
 
       {/* Product Count */}
       <p className="text-sm text-gray-500">
-        {totalProducts} {totalProducts === 1 ? 'artigo' : 'artigos'}
-        {activeSubcategory && <span className="text-black font-medium"> em {activeSubcategory}</span>}
+        {totalProducts} {totalProducts === 1 ? 'produkt' : 'produktów'}
+        {activeSubcategory && <span className="text-black font-medium"> w kategorii {activeSubcategory}</span>}
       </p>
     </div>
   );

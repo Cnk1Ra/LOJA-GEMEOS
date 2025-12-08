@@ -12,22 +12,22 @@ export default function Inspirations() {
   const inspirations = [
     {
       id: 1,
-      title: 'Capas de Edredon',
-      subtitle: 'Conforto e estilo para noites perfeitas',
+      title: 'Pościel Premium',
+      subtitle: 'Komfort i styl na idealne noce',
       href: '/cama?subcategoria=Capas%20de%20Edredon',
       image: edredonProduct?.image,
     },
     {
       id: 2,
-      title: 'Lençóis Premium',
-      subtitle: 'Algodão de alta qualidade',
+      title: 'Prześcieradła Premium',
+      subtitle: 'Bawełna najwyższej jakości',
       href: '/cama?subcategoria=Lençóis',
       image: lencoisProduct?.image,
     },
     {
       id: 3,
-      title: 'Fronhas & Almofadas',
-      subtitle: 'Complete a decoração do seu quarto',
+      title: 'Poszewki i Poduszki',
+      subtitle: 'Uzupełnij wystrój swojej sypialni',
       href: '/cama?subcategoria=Fronhas',
       image: fronhasProduct?.image,
     }
@@ -40,17 +40,17 @@ export default function Inspirations() {
         <div className="flex items-end justify-between mb-10">
           <div>
             <h2 className="text-3xl md:text-4xl font-black text-black mb-2">
-              Inspirações
+              Inspiracje
             </h2>
             <p className="text-neutral-500">
-              Descubra as tendências para o seu quarto
+              Odkryj trendy do swojej sypialni
             </p>
           </div>
           <Link
             href="/cama"
             className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-black hover:text-amber-500 transition-colors"
           >
-            Ver tudo
+            Zobacz wszystko
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -92,7 +92,7 @@ export default function Inspirations() {
 
                 {/* Button */}
                 <div className="flex items-center gap-2 text-amber-500 font-medium text-sm group-hover:gap-4 transition-all">
-                  <span>Explorar</span>
+                  <span>Odkryj</span>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>

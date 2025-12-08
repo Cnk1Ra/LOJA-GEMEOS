@@ -10,7 +10,7 @@ export default function HeroBanner() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/images/christmas-banner.jpg"
-          alt="Christmas, Passionately - Decoração de Natal"
+          alt="Świąteczna Kolekcja Pościeli"
           className="w-full h-full object-cover object-center"
         />
 
@@ -23,7 +23,7 @@ export default function HeroBanner() {
             href="/cama"
             className="inline-flex items-center justify-center gap-2 bg-white text-black font-bold px-6 py-3 md:px-8 md:py-4 rounded-full hover:bg-amber-500 transition-colors shadow-lg"
           >
-            Ver Coleção de Natal
+            Zobacz Kolekcję Świąteczną
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>

@@ -28,10 +28,10 @@ export default function Categories() {
         {/* Section Header */}
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-black text-black mb-3">
-            Explore por Categoria
+            Przeglądaj Kategorie
           </h2>
           <p className="text-neutral-500 text-lg">
-            Encontre o conforto perfeito para o seu quarto
+            Znajdź idealny komfort dla swojej sypialni
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function Categories() {
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-6">
                   <span className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-1">
-                    {category.count} produtos
+                    {category.count} produktów
                   </span>
                   <h3 className="text-white text-lg md:text-xl font-bold leading-tight">
                     {category.name}
