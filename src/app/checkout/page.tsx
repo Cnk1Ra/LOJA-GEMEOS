@@ -189,37 +189,6 @@ export default function CheckoutPage() {
         setOrderNumber(finalOrderNumber);
       }
 
-      // Send to Utimify for tracking (don't wait for response)
-      try {
-        fetch('/api/utimify/track-order', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            orderNumber: finalOrderNumber,
-            shopifyOrderId: finalShopifyOrderId,
-            email: formData.email,
-            name: formData.name,
-            lastName: formData.lastName,
-            phone: formData.phone,
-            address: formData.address,
-            postalCode: formData.postalCode,
-            city: formData.city,
-            voivodeship: formData.voivodeship,
-            cartItems: cartItems,
-            upsellItems: upsellItems,
-            subtotal: calcSubtotal,
-            shippingCost: calcShippingCost,
-            extrasTotal: calcExtrasTotal,
-            upsellTotal: upsellTotal,
-            total: calcTotal
-          }),
-        }).catch(err => console.error('Utimify tracking error:', err));
-      } catch (utimifyError) {
-        console.error('Utimify tracking error:', utimifyError);
-      }
-
       // Clear cart regardless of Shopify result
       localStorage.removeItem('lojaGemeosCart');
       localStorage.removeItem('lojaGemeosExtras');
