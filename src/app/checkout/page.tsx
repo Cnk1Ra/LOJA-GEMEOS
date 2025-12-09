@@ -67,6 +67,8 @@ export default function CheckoutPage() {
   const [orderNumber, setOrderNumber] = useState('');
   const [upsellItems, setUpsellItems] = useState<UpsellItem[]>([]);
   const [upsellTotal, setUpsellTotal] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shopifyOrderId, setShopifyOrderId] = useState<string | null>(null);
 
   // Load cart data from localStorage
   useEffect(() => {
@@ -129,17 +131,78 @@ export default function CheckoutPage() {
     setUpsellItems(upsells);
   }, [cartItems]);
 
-  // Complete order function
-  const completeOrder = useCallback(() => {
-    const orderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
-    setOrderNumber(orderNum);
+  // Complete order function - sends to Shopify
+  const completeOrder = useCallback(async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
 
-    // Clear cart
-    localStorage.removeItem('lojaGemeosCart');
-    localStorage.removeItem('lojaGemeosExtras');
+    // Calculate totals inside callback
+    const calcSubtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const calcExtrasTotal = extras ? (extras.giftWrapPrice + extras.ecoPrice + extras.priorityPrice) : 0;
+    const calcShippingCost = calcSubtotal >= 200 ? 0 : 14.99;
+    const calcTotal = calcSubtotal + calcExtrasTotal + calcShippingCost + upsellTotal;
 
-    setOrderComplete(true);
-  }, []);
+    try {
+      // Prepare order data for Shopify
+      const orderData = {
+        email: formData.email,
+        name: formData.name,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        address: formData.address,
+        postalCode: formData.postalCode,
+        city: formData.city,
+        voivodeship: formData.voivodeship,
+        notes: formData.notes,
+        cartItems: cartItems,
+        upsellItems: upsellItems,
+        subtotal: calcSubtotal,
+        shippingCost: calcShippingCost,
+        extrasTotal: calcExtrasTotal,
+        upsellTotal: upsellTotal,
+        total: calcTotal
+      };
+
+      // Send order to Shopify via our API
+      const response = await fetch('/api/shopify/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setOrderNumber(result.orderName || `#${result.orderNumber}`);
+        setShopifyOrderId(result.orderId);
+      } else {
+        // Fallback to local order number if Shopify fails
+        console.error('Shopify order creation failed:', result.error);
+        const fallbackOrderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
+        setOrderNumber(fallbackOrderNum);
+      }
+
+      // Clear cart regardless of Shopify result
+      localStorage.removeItem('lojaGemeosCart');
+      localStorage.removeItem('lojaGemeosExtras');
+
+      setOrderComplete(true);
+    } catch (error) {
+      console.error('Error completing order:', error);
+      // Fallback to local order number on error
+      const fallbackOrderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
+      setOrderNumber(fallbackOrderNum);
+
+      localStorage.removeItem('lojaGemeosCart');
+      localStorage.removeItem('lojaGemeosExtras');
+
+      setOrderComplete(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [isSubmitting, formData, cartItems, extras, upsellItems, upsellTotal]);
 
   // Auto-confirm order if user leaves during upsell
   useEffect(() => {
@@ -811,9 +874,24 @@ export default function CheckoutPage() {
           </div>
           <button
             onClick={handleSubmit}
-            className="bg-amber-500 text-black font-bold px-6 py-4 rounded-xl hover:bg-amber-400 transition-colors"
+            disabled={isSubmitting}
+            className={`font-bold px-6 py-4 rounded-xl transition-colors flex items-center gap-2 ${
+              isSubmitting
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-amber-500 text-black hover:bg-amber-400'
+            }`}
           >
-            {step === 'address' ? 'DALEJ' : step === 'confirmation' ? 'DALEJ' : 'ZAMÓW - ZAPŁAĆ PRZY ODBIORZE'}
+            {isSubmitting ? (
+              <>
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Przetwarzanie...
+              </>
+            ) : (
+              step === 'address' ? 'DALEJ' : step === 'confirmation' ? 'DALEJ' : 'ZAMÓW - ZAPŁAĆ PRZY ODBIORZE'
+            )}
           </button>
         </div>
       </div>
