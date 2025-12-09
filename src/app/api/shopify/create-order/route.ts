@@ -61,6 +61,10 @@ export async function POST(request: NextRequest) {
   try {
     const orderData: OrderData = await request.json();
 
+    // Format phone number properly - remove all non-digits and add country code
+    const cleanPhone = orderData.phone.replace(/\D/g, '');
+    const formattedPhone = cleanPhone.startsWith('48') ? `+${cleanPhone}` : `+48${cleanPhone}`;
+
     // Build line items from cart
     const lineItems = orderData.cartItems.map(item => ({
       title: item.description,
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
     const shopifyOrder = {
       order: {
         email: orderData.email,
-        phone: `+48${orderData.phone.replace(/\s/g, '')}`,
+        phone: formattedPhone,
         financial_status: 'pending', // Payment on delivery
         fulfillment_status: null,
         send_receipt: true,
@@ -128,7 +132,7 @@ export async function POST(request: NextRequest) {
           zip: orderData.postalCode,
           country: 'PL',
           country_code: 'PL',
-          phone: `+48${orderData.phone.replace(/\s/g, '')}`
+          phone: formattedPhone
         },
         billing_address: {
           first_name: orderData.name,
@@ -139,13 +143,13 @@ export async function POST(request: NextRequest) {
           zip: orderData.postalCode,
           country: 'PL',
           country_code: 'PL',
-          phone: `+48${orderData.phone.replace(/\s/g, '')}`
+          phone: formattedPhone
         },
         customer: {
           email: orderData.email,
           first_name: orderData.name,
           last_name: orderData.lastName,
-          phone: `+48${orderData.phone.replace(/\s/g, '')}`,
+          phone: formattedPhone,
           accepts_marketing: true
         },
         inventory_behaviour: 'bypass', // Don't decrement inventory (manual control)
