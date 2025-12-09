@@ -174,14 +174,50 @@ export default function CheckoutPage() {
 
       const result = await response.json();
 
+      let finalOrderNumber = '';
+      let finalShopifyOrderId = '';
+
       if (result.success) {
-        setOrderNumber(result.orderName || `#${result.orderNumber}`);
-        setShopifyOrderId(result.orderId);
+        finalOrderNumber = result.orderName || `#${result.orderNumber}`;
+        finalShopifyOrderId = result.orderId;
+        setOrderNumber(finalOrderNumber);
+        setShopifyOrderId(finalShopifyOrderId);
       } else {
         // Fallback to local order number if Shopify fails
         console.error('Shopify order creation failed:', result.error);
-        const fallbackOrderNum = Math.random().toString(36).substr(2, 9).toUpperCase();
-        setOrderNumber(fallbackOrderNum);
+        finalOrderNumber = Math.random().toString(36).substr(2, 9).toUpperCase();
+        setOrderNumber(finalOrderNumber);
+      }
+
+      // Send to Utimify for tracking (don't wait for response)
+      try {
+        fetch('/api/utimify/track-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderNumber: finalOrderNumber,
+            shopifyOrderId: finalShopifyOrderId,
+            email: formData.email,
+            name: formData.name,
+            lastName: formData.lastName,
+            phone: formData.phone,
+            address: formData.address,
+            postalCode: formData.postalCode,
+            city: formData.city,
+            voivodeship: formData.voivodeship,
+            cartItems: cartItems,
+            upsellItems: upsellItems,
+            subtotal: calcSubtotal,
+            shippingCost: calcShippingCost,
+            extrasTotal: calcExtrasTotal,
+            upsellTotal: upsellTotal,
+            total: calcTotal
+          }),
+        }).catch(err => console.error('Utimify tracking error:', err));
+      } catch (utimifyError) {
+        console.error('Utimify tracking error:', utimifyError);
       }
 
       // Clear cart regardless of Shopify result
