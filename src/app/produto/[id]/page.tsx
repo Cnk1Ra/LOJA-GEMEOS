@@ -7,10 +7,10 @@ import ProductCard from '@/components/ProductCard';
 import { getProductById, getRelatedProducts, products } from '@/data/products';
 
 const sizes = [
-  { id: '1', name: '140 x 200 cm (Łóżko 90/100 cm)', originalPrice: 259.99, price: 159.99 },
-  { id: '2', name: '200 x 200 cm (Łóżko 140 cm)', originalPrice: 349.99, price: 219.99 },
-  { id: '3', name: '220 x 240 cm (Łóżko 160 cm)', originalPrice: 399.99, price: 249.99 },
-  { id: '4', name: '260 x 240 cm (Łóżko 180 cm)', originalPrice: 499.99, price: 319.99 },
+  { id: '1', name: '140 x 200 cm (Łóżko 90/100 cm)', originalPrice: 399.90, price: 198.90 },
+  { id: '2', name: '200 x 200 cm (Łóżko 140 cm)', originalPrice: 459.90, price: 228.90 },
+  { id: '3', name: '220 x 240 cm (Łóżko 160 cm)', originalPrice: 519.90, price: 258.90 },
+  { id: '4', name: '260 x 240 cm (Łóżko 180 cm)', originalPrice: 579.90, price: 288.90 },
 ];
 
 // Polish names for reviews
