@@ -7,11 +7,47 @@ import ProductCard from '@/components/ProductCard';
 import { getProductById, getRelatedProducts, products } from '@/data/products';
 
 const sizes = [
-  { id: '1', name: '140 x 200 cm (Łóżko 90/100 cm)', originalPrice: 399.90, price: 198.90 },
-  { id: '2', name: '200 x 200 cm (Łóżko 140 cm)', originalPrice: 459.90, price: 228.90 },
-  { id: '3', name: '220 x 240 cm (Łóżko 160 cm)', originalPrice: 519.90, price: 258.90 },
-  { id: '4', name: '260 x 240 cm (Łóżko 180 cm)', originalPrice: 579.90, price: 288.90 },
+  { id: '1', name: '140 x 200 cm (Łóżko 90/100 cm)', originalPrice: 399.90, price: 198.90, shopifyUrl: 'https://lencol-01.myshopify.com/products/poszewka-na-poduszke-z-pranego-lnu-linot' },
+  { id: '2', name: '200 x 200 cm (Łóżko 140 cm)', originalPrice: 459.90, price: 228.90, shopifyUrl: 'https://lencol-01.myshopify.com/products/200-200-cm-lozko-140-cm' },
+  { id: '3', name: '220 x 240 cm (Łóżko 160 cm)', originalPrice: 519.90, price: 258.90, shopifyUrl: 'https://lencol-01.myshopify.com/products/220-240-cm-lozko-160-cm' },
+  { id: '4', name: '260 x 240 cm (Łóżko 180 cm)', originalPrice: 579.90, price: 288.90, shopifyUrl: 'https://lencol-01.myshopify.com/products/260-240-cm-lozko-180-cm' },
 ];
+
+// Function to get UTM parameters from URL or localStorage
+const getUtmParams = (): string => {
+  if (typeof window === 'undefined') return '';
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const utmParams: string[] = [];
+  const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+
+  // First try to get from URL
+  utmKeys.forEach(key => {
+    const value = urlParams.get(key);
+    if (value) {
+      utmParams.push(`${key}=${encodeURIComponent(value)}`);
+    }
+  });
+
+  // Fallback to localStorage (Utmify storage)
+  if (utmParams.length === 0) {
+    try {
+      const storedUtms = localStorage.getItem('__utmify_session_utm');
+      if (storedUtms) {
+        const parsed = JSON.parse(storedUtms);
+        utmKeys.forEach(key => {
+          if (parsed[key]) {
+            utmParams.push(`${key}=${encodeURIComponent(parsed[key])}`);
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Error reading UTMs from localStorage:', e);
+    }
+  }
+
+  return utmParams.length > 0 ? utmParams.join('&') : '';
+};
 
 // Polish names for reviews
 const polishReviews = [
@@ -45,6 +81,7 @@ export default function ProductPage() {
   const [imageError, setImageError] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [showAddedMessage, setShowAddedMessage] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const realProduct = getProductById(productId);
   const relatedProductsData = realProduct ? getRelatedProducts(realProduct, 4) : products.slice(0, 4);
@@ -133,6 +170,22 @@ export default function ProductPage() {
       setShowAddedMessage(false);
       router.push('/carrinho');
     }, 800);
+  };
+
+  // Handle redirect to Shopify checkout with UTMs
+  const handleBuyNow = () => {
+    setIsRedirecting(true);
+    const utmParams = getUtmParams();
+    let checkoutUrl = selectedSize.shopifyUrl;
+
+    // Add UTM parameters to the Shopify URL
+    if (utmParams) {
+      const separator = checkoutUrl.includes('?') ? '&' : '?';
+      checkoutUrl = `${checkoutUrl}${separator}${utmParams}`;
+    }
+
+    // Redirect to Shopify checkout
+    window.location.href = checkoutUrl;
   };
 
   return (
@@ -403,32 +456,23 @@ export default function ProductPage() {
 
       {/* Fixed Bottom Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
-        <div className="p-4 flex gap-3 items-center">
-          <div className="flex-1">
-            <p className="text-xs text-gray-500">Cena</p>
-            <p className="text-xl font-bold text-black">
-              {selectedSize.price.toFixed(2).replace('.', ',')} zł
-            </p>
-          </div>
+        <div className="p-4">
           <button
-            onClick={addToCart}
-            disabled={isAdding}
-            className="flex-1 bg-black text-white font-bold py-4 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
+            onClick={handleBuyNow}
+            disabled={isRedirecting}
+            className="w-full bg-black text-white font-bold py-4 rounded-xl hover:bg-neutral-800 transition-colors disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            {isAdding ? (
+            {isRedirecting ? (
               <>
                 <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Dodawanie...
+                Przekierowywanie...
               </>
             ) : (
               <>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                DO KOSZYKA
+                KUP TERAZ - {selectedSize.price.toFixed(2).replace('.', ',')} zł
               </>
             )}
           </button>
